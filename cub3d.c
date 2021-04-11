@@ -6,7 +6,7 @@
 /*   By: lkrinova <lkrinova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/02 14:44:32 by lkrinova          #+#    #+#             */
-/*   Updated: 2021/03/23 16:47:08 by lkrinova         ###   ########.fr       */
+/*   Updated: 2021/04/06 13:55:39 by lkrinova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 	if (argc == 2)
 	{
 		check_map_f(argv[1]);
-		fd = open (argv[1], O_RDONLY);
+		fd = open(argv[1], O_RDONLY);
 		if ((byte_read = read(fd, buffer, 4096)) < 0)
 			ft_putstr_fd("Error in reading file \n", 2);
 		buffer[byte_read] = '\0';
@@ -58,6 +58,7 @@ int main(int argc, char **argv)
 		flags.ml.img.size_y = flags.res.y;
 		rays_arr_init(&flags);
 		flags.ml.img.addr = mlx_get_data_addr(flags.ml.img.im, &n, &n, &n);
+		get_text(&flags);
 		mlx_loop_hook(flags.ml.mlx_ptr, render, (void *)&flags);
 		mlx_hook(flags.ml.win_ptr, 2, 1L<<0, move, &flags);
 		mlx_loop(flags.ml.mlx_ptr);
@@ -66,8 +67,8 @@ int main(int argc, char **argv)
 ** Checking ------ TO DELETE ----------
 */
 
-		printf("x= %d\n", flags.res.x);
-		printf("y= %d\n", flags.res.y);
+//		printf("x= %d\n", flags.res.x);
+//		printf("y= %d\n", flags.res.y);
 		printf("NO texture= %s\n", flags.no_tex);
 		printf("SO texture= %s\n", flags.so_tex);
 		printf("WE texture= %s\n", flags.we_tex);
@@ -76,8 +77,8 @@ int main(int argc, char **argv)
 		printf("RGB floor = %d\n", flags.floor_rgb);
 		printf("RGB ceiling = %d\n", flags.ceil_col);
 		printf("Start of the map = %d\n", flags.allmap.m_start);
-		printf("Number of lines = %d\n", flags.allmap.size.x);
-		printf("Number of columns = %d\n", flags.allmap.size.y);
+//		printf("Number of lines = %d\n", flags.allmap.size.x);
+//		printf("Number of columns = %d\n", flags.allmap.size.y);
 		printf("Map\n");
 		int m = 0;
 		while (flags.allmap.map_ar[m] != 0)

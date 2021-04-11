@@ -1,33 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ray_config.c                                       :+:      :+:    :+:   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lkrinova <lkrinova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/03/16 16:06:32 by lkrinova          #+#    #+#             */
-/*   Updated: 2021/04/08 19:42:31 by lkrinova         ###   ########.fr       */
+/*   Created: 2020/11/15 14:12:47 by lkrinova          #+#    #+#             */
+/*   Updated: 2021/01/11 15:51:30 by lkrinova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "libft.h"
 
-float get_pov(char c)
+void	*ft_memmove(void *dst, const void *src, size_t len)
 {
-	float angle;
-
-	angle = 0.0;
-	if (c == 'N')
-		angle = -(float)(M_PI / 2);
-	else if (c == 'S')
-		angle = (float)(M_PI / 2);
-	else if (c == 'W')
-		angle = (float)(M_PI);
-	return(angle);
-}
-
-void rays_arr_init(t_cub *flags)
-{
-	if(!(flags->rays = malloc((flags->res.x) * sizeof(t_rays))))
-		ft_putstr_fd("Error in mallocing ray array", 2);
+	if (!dst && !src)
+		return (NULL);
+	if (len == 0 || src == dst)
+		return (dst);
+	if (dst < src)
+		return (ft_memcpy(dst, src, len));
+	while (len--)
+		((unsigned char *)dst)[len] = ((unsigned char *)src)[len];
+	return (dst);
 }

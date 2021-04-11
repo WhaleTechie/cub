@@ -6,7 +6,7 @@
 /*   By: lkrinova <lkrinova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/11 18:57:46 by lkrinova          #+#    #+#             */
-/*   Updated: 2021/03/23 17:26:41 by lkrinova         ###   ########.fr       */
+/*   Updated: 2021/04/08 20:23:20 by lkrinova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ void 	draw_sqaure(int x, int y, t_img img, int color)
 */
 	while (start_y <= y + MAP_SCALE/2)
 	{
-		my_mlx_pixel_put(&img, start_x, start_y, color);
+		pixel_put(&img, start_x, start_y, color);
 		start_y++;
 	}
 	start_x += MAP_SCALE;
 	start_y = y - MAP_SCALE/2;
 	while (start_y <= y + MAP_SCALE/2)
 	{
-		my_mlx_pixel_put(&img, start_x, start_y, color);
+		pixel_put(&img, start_x, start_y, color);
 		start_y++;
 	}
 /*
@@ -42,19 +42,19 @@ void 	draw_sqaure(int x, int y, t_img img, int color)
 	start_y = y - MAP_SCALE/2;
 	while (start_x <= x + MAP_SCALE/2)
 	{
-		my_mlx_pixel_put(&img, start_x, start_y, color);
+		pixel_put(&img, start_x, start_y, color);
 		start_x++;
 	}
 	start_y += MAP_SCALE;
 	start_x = x - MAP_SCALE/2;
 	while (start_x <= x + MAP_SCALE/2)
 	{
-		my_mlx_pixel_put(&img, start_x, start_y, color);
+		pixel_put(&img, start_x, start_y, color);
 		start_x++;
 	}
 }
 
-void            my_mlx_pixel_put(t_img *img, int x, int y, int color)
+void            pixel_put(t_img *img, int x, int y, int color)
 {
 	char    *dst;
 
@@ -80,6 +80,35 @@ void draw_map(t_cub flags)
 	}
 }
 
+unsigned int pixel_get(t_textur *textura, int x, int y)
+{
+	char    *dst;
+
+	dst = textura->addr + (y * textura->width)*4 + (x * 4);
+	return(*(unsigned int *)dst);
+}
+
+void draw_texture(t_cub *fl)
+{
+
+	int i;
+	int j;
+	unsigned int color;
+
+	i = 0;
+	while (i <= fl->allmap.no.height)
+	{
+		j = 0;
+		while (j <= fl->allmap.no.width)
+		{
+			color = pixel_get(&fl->allmap.no, i, j);
+			pixel_put(&fl->ml.img, i, j, color);
+			j++;
+		}
+		i++;
+	}
+}
+
 void 	draw_player(int x, int y, t_img img, int color)
 {
 	int start_x;
@@ -93,14 +122,14 @@ void 	draw_player(int x, int y, t_img img, int color)
 */
 	while (start_y <= y + 2)
 	{
-		my_mlx_pixel_put(&img, start_x, start_y,  color);
+		pixel_put(&img, start_x, start_y,  color);
 		start_y++;
 	}
 	start_x += 4;
 	start_y = y - 2;
 	while (start_y <= y + 2)
 	{
-		my_mlx_pixel_put(&img,  start_x, start_y, color);
+		pixel_put(&img,  start_x, start_y, color);
 		start_y++;
 	}
 /*
@@ -110,14 +139,14 @@ void 	draw_player(int x, int y, t_img img, int color)
 	start_y = y - 2;
 	while (start_x <= x + 2)
 	{
-		my_mlx_pixel_put(&img, start_x, start_y,  color);
+		pixel_put(&img, start_x, start_y,  color);
 		start_x++;
 	}
 	start_y += 4;
 	start_x = x - 2;
 	while (start_x <= x + 2)
 	{
-		my_mlx_pixel_put(&img, start_x, start_y, color);
+		pixel_put(&img, start_x, start_y, color);
 		start_x++;
 	}
 }
@@ -137,7 +166,7 @@ void clean_s(t_cub flags)
 		i = 0;
 		while (i <= flags.res.x)
 		{
-			my_mlx_pixel_put(&flags.ml.img, i, j, flags.ceil_col);
+			pixel_put(&flags.ml.img, i, j, flags.ceil_col);
 			i++;
 		}
 		j++;
@@ -147,7 +176,7 @@ void clean_s(t_cub flags)
 		i = 0;
 		while (i <= flags.res.x)
 		{
-			my_mlx_pixel_put(&flags.ml.img, i, j, flags.floor_rgb);
+			pixel_put(&flags.ml.img, i, j, flags.floor_rgb);
 			i++;
 		}
 		j++;
@@ -157,18 +186,33 @@ void clean_s(t_cub flags)
 int	move(int keycode, t_cub *fl)
 {
 	if (keycode == WKEY)
-		fl->allmap.player.pos.y -= 0.2;
+	{
+		fl->allmap.player.pos.x += cos(fl->allmap.player.pov)/MAP_SCALE;
+		fl->allmap.player.pos.y += sin(fl->allmap.player.pov)/MAP_SCALE;
+	}
 	else if (keycode == SKEY)
-		fl->allmap.player.pos.y += 0.2;
+	{
+		fl->allmap.player.pos.x -= cos(fl->allmap.player.pov)/MAP_SCALE;
+		fl->allmap.player.pos.y -= sin(fl->allmap.player.pov)/MAP_SCALE;
+	}
 	else if (keycode == AKEY)
-		fl->allmap.player.pos.x -= 0.2;
+	{
+		fl->allmap.player.pos.x += sin(fl->allmap.player.pov)/MAP_SCALE;
+		fl->allmap.player.pos.y -= cos(fl->allmap.player.pov)/MAP_SCALE;
+	}
 	else if (keycode == DKEY)
-		fl->allmap.player.pos.x += 0.2;
+	{
+		fl->allmap.player.pos.x -= sin(fl->allmap.player.pov)/MAP_SCALE;
+		fl->allmap.player.pos.y += cos(fl->allmap.player.pov)/MAP_SCALE;
+	}
 	else if (keycode == LARROW)
-		fl->allmap.player.pov += 0.2;
-	else if (keycode == RARROW)
 		fl->allmap.player.pov -= 0.2;
+	else if (keycode == RARROW)
+		fl->allmap.player.pov += 0.2;
 	else if (keycode == ESCAP)
 		exit(0);
+	if (fl->allmap.player.pos.x >fl->allmap.size.x || fl->allmap.player.pos.y
+	> fl->allmap.size.y)
+		return(0);
 	return(0);
 }

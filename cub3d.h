@@ -6,7 +6,7 @@
 /*   By: lkrinova <lkrinova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/02 14:51:08 by lkrinova          #+#    #+#             */
-/*   Updated: 2021/03/23 17:26:16 by lkrinova         ###   ########.fr       */
+/*   Updated: 2021/04/10 15:45:20 by lkrinova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 # define DKEY 2
 # define LARROW 123
 # define RARROW 124
-# define FOV (M_PI/2)
+# define FOV (M_PI/3)
 # define ESCAP 53
 
 typedef struct s_fxy
@@ -38,8 +38,8 @@ typedef struct s_fxy
 
 typedef struct s_xy
 {
-	int 		x;
-	int 		y;
+	float 		x;
+	float 		y;
 }				t_xy;
 
 typedef struct  s_img {
@@ -69,9 +69,23 @@ typedef struct s_rays
 {
 	float 		dist;
 	t_xy 		ray_pos;
-	int 		size;
+	float 		size;
+	int 		hitx;
+	int 		hity;
+	int 		hit_text;
 
 }				t_rays;
+
+typedef struct s_textur
+{
+	char 		*image;
+	int			width;
+	int			height;
+	char 		*addr;
+	int			bpp;
+	int			size_line;
+	int			endian;
+}				t_textur;
 
 typedef struct 	s_map
 {
@@ -79,15 +93,22 @@ typedef struct 	s_map
 	char		**map_ar;
 	int 		m_start;
 	t_player	player;
+	t_textur 	we;
+	t_textur 	no;
+	t_textur 	so;
+	t_textur 	ea;
+	t_textur 	sprite;
 }				t_map;
+
+
 
 typedef struct s_cub
 {
 	t_xy 		res;
-	char		*we_tex;
-	char		*no_tex;
+	char 		*no_tex;
 	char 		*so_tex;
 	char 		*ea_tex;
+	char 		*we_tex;
 	char 		*sprite;
 	int 		floor_rgb;
 	int			ceil_col;
@@ -107,19 +128,22 @@ void 	get_param(char **arr, t_cub *flags);
 void 	get_map(char **arr, t_cub *flags);
 void 	free_mass(char **mass);
 void	get_r_rgb(char *s, t_cub *flags);
-void	get_texture(char *str, t_cub *flagg);
 int		check_rgb(char *s);
 int 	is_valid(char **ar);
 void 	draw_sqaure(int x, int y, t_img img, int color);
-void    my_mlx_pixel_put(t_img *img, int x, int y, int color);
+void    pixel_put(t_img *img, int x, int y, int color);
+unsigned int pixel_get(t_textur *textura, int x, int y);
 void 	draw_map(t_cub flags);
 void 	draw_player(int x, int y, t_img img, int color);
+void draw_col(t_cub *fl, int text, int col_num);
 int		move(int keycode, t_cub *fl);
 void	clean_s(t_cub flags);
 int		render(t_cub *flags);
 float	get_pov(char c);
+void	get_texture(char *str, t_cub *flagg);
+void draw_texture(t_cub *fl);
+void	get_text(t_cub *fl);
 void 	cast_view(t_player *pl, t_cub *fl);
 void	rays_arr_init(t_cub *flags);
-void 	draw_col(t_cub *fl);
 
 #endif

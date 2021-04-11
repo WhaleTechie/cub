@@ -1,33 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ray_config.c                                       :+:      :+:    :+:   */
+/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lkrinova <lkrinova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/03/16 16:06:32 by lkrinova          #+#    #+#             */
-/*   Updated: 2021/04/08 19:42:31 by lkrinova         ###   ########.fr       */
+/*   Created: 2020/11/15 17:36:41 by lkrinova          #+#    #+#             */
+/*   Updated: 2021/01/11 15:51:30 by lkrinova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "libft.h"
 
-float get_pov(char c)
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 {
-	float angle;
+	unsigned int i;
+	unsigned int j;
 
-	angle = 0.0;
-	if (c == 'N')
-		angle = -(float)(M_PI / 2);
-	else if (c == 'S')
-		angle = (float)(M_PI / 2);
-	else if (c == 'W')
-		angle = (float)(M_PI);
-	return(angle);
-}
-
-void rays_arr_init(t_cub *flags)
-{
-	if(!(flags->rays = malloc((flags->res.x) * sizeof(t_rays))))
-		ft_putstr_fd("Error in mallocing ray array", 2);
+	i = 0;
+	j = 0;
+	if (!src)
+		return (0);
+	if ((!dst) || (dstsize == 0))
+		return (ft_strlen(src));
+	while (src[i] != '\0')
+	{
+		if (dstsize && i < (dstsize - 1))
+		{
+			dst[i] = src[i];
+			j++;
+		}
+		i++;
+	}
+	dst[j] = '\0';
+	return (i);
 }

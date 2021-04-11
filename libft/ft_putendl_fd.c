@@ -1,33 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ray_config.c                                       :+:      :+:    :+:   */
+/*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lkrinova <lkrinova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/03/16 16:06:32 by lkrinova          #+#    #+#             */
-/*   Updated: 2021/04/08 19:42:31 by lkrinova         ###   ########.fr       */
+/*   Created: 2020/11/17 13:51:19 by lkrinova          #+#    #+#             */
+/*   Updated: 2021/01/11 15:51:30 by lkrinova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+/*
+** Outputs the string ’s’ to the given file descriptor, followed by a newline.
+** #1. The string to output.
+** #2. The file descriptor on which to write.
+*/
 
-float get_pov(char c)
+#include "libft.h"
+
+void	ft_putendl_fd(char *s, int fd)
 {
-	float angle;
-
-	angle = 0.0;
-	if (c == 'N')
-		angle = -(float)(M_PI / 2);
-	else if (c == 'S')
-		angle = (float)(M_PI / 2);
-	else if (c == 'W')
-		angle = (float)(M_PI);
-	return(angle);
-}
-
-void rays_arr_init(t_cub *flags)
-{
-	if(!(flags->rays = malloc((flags->res.x) * sizeof(t_rays))))
-		ft_putstr_fd("Error in mallocing ray array", 2);
+	if (s)
+	{
+		ft_putstr_fd(s, fd);
+		write(fd, "\n", 1);
+	}
 }
