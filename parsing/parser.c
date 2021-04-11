@@ -85,7 +85,7 @@ void get_text(t_cub *fl)
 												  .width, &fl->allmap.ea.height)))
 		fl->allmap.ea.addr = mlx_get_data_addr(fl->allmap.ea.image,
 										 &fl->allmap.ea.bpp,&fl->allmap.ea.size_line, &fl->allmap.ea.endian);
-	if ((fl->allmap.sprite.image = mlx_xpm_file_to_image(fl->allmap.sprite.image,
+	if ((fl->allmap.sprite.image = mlx_xpm_file_to_image(fl->ml.mlx_ptr,
 													  fl->sprite, &fl->allmap
 													  .sprite.width, &fl->allmap.sprite.height)))
 		fl->allmap.sprite.addr = mlx_get_data_addr(fl->ml.mlx_ptr, &fl->allmap.sprite.bpp, &fl->allmap.sprite.size_line, &fl->allmap.sprite.endian);

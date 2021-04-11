@@ -6,7 +6,7 @@
 /*   By: lkrinova <lkrinova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/14 17:09:15 by lkrinova          #+#    #+#             */
-/*   Updated: 2021/04/11 06:34:51 by lkrinova         ###   ########.fr       */
+/*   Updated: 2021/04/11 09:16:18 by lkrinova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void draw_col(t_cub *fl, int text, int col_num)
 	int y;
 	int i;
 	unsigned int color;
-	float t_st = 0;
+	float t_st;
 
 	if (fl->rays[col_num].hitx == 0)
 		t_st = fabsf(fl->rays[col_num].ray_pos.y - (int)(fl->rays[col_num]
@@ -46,7 +46,8 @@ void draw_col(t_cub *fl, int text, int col_num)
 	t_st = fabsf(fl->rays[col_num].ray_pos.x - (int)(fl->rays[col_num].ray_pos
 			.x)) * fl->allmap.no.width;
 //
-	wall_start = roundf(fl->res.y / 2 - (fl->rays[col_num].size /2));
+	wall_start = fl->res.y / 2 - (fl->rays[col_num].size /2);
+//			roundf(fl->res.y / 2 - (fl->rays[col_num].size /2));
 	param = (fl->rays[col_num].size/ fl->allmap.no.height);
 	i = 0;
 	while (i < fl->rays[col_num].size)
@@ -76,6 +77,8 @@ void cast_view(t_player *pl, t_cub *fl)
 	float y;
 	int i;
 	int text = 0;
+	float coef;
+
 	//		distance to projection plane
 	fl->dist_plane = fl->res.x / 2 / tan(FOV / 2);
 	pl->ray_st = pl->pov - (FOV/2);
@@ -103,15 +106,18 @@ void cast_view(t_player *pl, t_cub *fl)
 			fl->rays[i].hity = 1;
 
 //		Distance and ray size
+		coef = cosf(pl->pov - pl->ray_st) + 0.1;
 		fl->rays[i].dist = hypotf((fl->rays[i].ray_pos.x - pl->pos.x),
 							(fl->rays[i].ray_pos.y - pl->pos.y)) * cosf
-				(pl->pov - pl->ray_st);
-		fl->rays[i].size = (1 / fl->rays[i].dist  * fl->dist_plane);
+									(pl->pov - pl->ray_st);
+		fl->rays[i].size = 	(1 / fl->rays[i].dist  * fl->dist_plane);
+//				fl->res.y / fl->rays[i].dist * fl->res.x / fl->res.y;
+
 		if (fl->rays[i].size > fl->res.y)
 			fl->rays[i].size = fl->res.y;
 
 //		Drawing walls
-		draw_col(fl, text, i);
+		draw_col(fl, text, i); // text добавить
 		i++;
 		pl->ray_st += (float)(FOV) / fl->res.x;
 	}

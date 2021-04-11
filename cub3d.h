@@ -6,7 +6,7 @@
 /*   By: lkrinova <lkrinova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/02 14:51:08 by lkrinova          #+#    #+#             */
-/*   Updated: 2021/04/10 15:45:20 by lkrinova         ###   ########.fr       */
+/*   Updated: 2021/04/11 07:23:27 by lkrinova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ void    pixel_put(t_img *img, int x, int y, int color);
 unsigned int pixel_get(t_textur *textura, int x, int y);
 void 	draw_map(t_cub flags);
 void 	draw_player(int x, int y, t_img img, int color);
-void draw_col(t_cub *fl, int text, int col_num);
+void	draw_col(t_cub *fl, int text, int col_num);
 int		move(int keycode, t_cub *fl);
 void	clean_s(t_cub flags);
 int		render(t_cub *flags);
