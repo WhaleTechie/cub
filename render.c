@@ -30,37 +30,48 @@ void draw_col(t_cub *fl, t_textur tx, int c_n)
 	double i;
 	unsigned int color;
 	double t_x;
-	double offset = 0;
+	double offset;
+
+    offset = 0;
+    param = (fl->rs[c_n].size / tx.hei);
 
 	if (fl->rs[c_n].hitx == 1)
     {
-	    t_x = (fl->rs[c_n].r_pos.x - (int)(fl->rs[c_n].r_pos.x)) * tx.wid;
-//        printf("XXXX\n");
+        t_x = (fl->rs[c_n].r_pos.x - (int)(fl->rs[c_n].r_pos.x)) * tx.wid;
+        wall_start = (fl->res.y / 2) - (fl->rs[c_n].size / 2);
+        i = 0;
+	    if (fl->rs[c_n].size > fl->res.y)
+        {
+	        wall_start = 0;
+	        offset = (fl->rs[c_n].size - fl->res.y) / 2 / param;
+
+        }
+	    while (i < fl->rs[c_n].size && (i < fl->res.y))
+	    {
+//	        printf("ofset + 1/param %f\n",(offset + i / param));
+            color = pixel_get(&tx, t_x, (offset + i / param));
+            pixel_put(&fl->ml.img, c_n, (int)(wall_start + i), color);
+            i++;
+	    }
     }
 	else
     {
-        t_x = (fl->rs[c_n].r_pos.x - (int)(fl->rs[c_n].r_pos.x)) * tx.hei;
-//        printf("YYYY\n");
+        t_x = (fl->rs[c_n].r_pos.y - (int)(fl->rs[c_n].r_pos.y)) * tx.wid;
+	    wall_start = (fl->res.y / 2) - (fl->rs[c_n].size / 2);
+        i = 0;
+        if (fl->rs[c_n].size > fl->res.y)
+        {
+            wall_start = 0;
+            offset = (fl->rs[c_n].size - fl->res.y) / 2 / param;
+        }
+        while (i < fl->rs[c_n].size && (i < fl->res.y))
+        {
+            color = pixel_get(&tx, t_x, (offset + i / param));
+            pixel_put(&fl->ml.img, c_n, (int)(wall_start + i), color);
+            i++;
+        }
     }
-	wall_start = (fl->res.y / 2) - (fl->rs[c_n].size / 2);
-	param = (fl->rs[c_n].size / tx.hei); // зависит -- или |
-	i = 0;
-	if (fl->rs[c_n].size > fl->res.y)
-    {
-	    wall_start = 0;
-	    offset = (fl->rs[c_n].size - fl->res.y) / 2 / param;
-	    param = (fl->rs[c_n].size / tx.hei);
-    }
-	while (i <= fl->rs[c_n].size && (i < fl->res.y))
-	{
-
-	    color = pixel_get(&tx, t_x, (offset + i / param));
-	    pixel_put(&fl->ml.img, c_n, (int)(wall_start + i), color);
-		i++;
-	}
 }
-
-
 
 void cast_view(t_player *pl, t_cub *fl)
 {
@@ -73,7 +84,6 @@ void cast_view(t_player *pl, t_cub *fl)
     pl->r_st = pl->pov - (FOV/2);
     pl->r_end = pl->pov + (FOV /2);
 
-
     i = 0;
     while (pl->r_st < pl->r_end)
     {
@@ -83,17 +93,19 @@ void cast_view(t_player *pl, t_cub *fl)
         {
             x += cos(pl->r_st)/120;
             y += sin(pl->r_st)/120;
-            pixel_put(&fl->ml.img, x * M_SCALE, y * M_SCALE, 0); // для теста
+//            pixel_put(&fl->ml.img, x * M_SCALE, y * M_SCALE, 0); // для теста
         }
-//		Distance and ray size
-        fl->rs[i].dist = hypotf((fl->rs[i].r_pos.x - pl->pos.x),(fl->rs[i].r_pos.y - pl->pos.y)) * cosf(pl->pov - pl->r_st);
-        fl->rs[i].size = 	(1 / fl->rs[i].dist  * fl->dist_plane);
 
 //		Hits which side
         fl->rs[i].r_pos.x = x;
         fl->rs[i].r_pos.y = y;
+
+//		Distance and ray size
+        fl->rs[i].dist = hypotf((fl->rs[i].r_pos.x - pl->pos.x),(fl->rs[i].r_pos.y - pl->pos.y)) * cosf(pl->pov - pl->r_st);
+        fl->rs[i].size = 	(1 / fl->rs[i].dist  * fl->dist_plane);
+
         fl->rs[i].qdrnt = f_quadrant(fl->m.plr.r_st);
-        if (fabs(fl->rs[i].r_pos.y - round(fl->rs[i].r_pos.y)) < 0.01)
+        if (fabs(fl->rs[i].r_pos.y - round(fl->rs[i].r_pos.y)) < fabs(fl->rs[i].r_pos.x - round(fl->rs[i].r_pos.x)))
         {
             fl->rs[i].hitx = 1;
             fl->rs[i].hity = 0;
@@ -102,7 +114,8 @@ void cast_view(t_player *pl, t_cub *fl)
             else
                 draw_col(fl, fl->m.so, i);
         }
-        else if (fabs(fl->rs[i].r_pos.x - round(fl->rs[i].r_pos.x)) < 0.01)
+        else
+//            if (fabs(fl->rs[i].r_pos.x - round(fl->rs[i].r_pos.x)) < 0.01)
         {
             fl->rs[i].hity = 1;
             fl->rs[i].hitx = 0;
@@ -111,24 +124,6 @@ void cast_view(t_player *pl, t_cub *fl)
             else
             draw_col(fl, fl->m.ea, i);
         }
-
-
-
-//        fl->rs[i].dist = hypotf((fl->rs[i].r_pos.x - pl->pos.x),(fl->rs[i].r_pos.y - pl->pos.y)) * cosf(pl->pov - pl->r_st);
-//        fl->rs[i].size = 	(1 / fl->rs[i].dist  * fl->dist_plane);
-
-//        fl->rs[i].qdrnt = f_quadrant(fl->m.plr.r_st);
-//        if ((fl->rs[i].qdrnt == 4 || fl->rs[i].qdrnt == 3) && fl->rs[i].hitx == 1)
-//            draw_col(fl, &fl->m.no, i);
-//        else if ((fl->rs[i].qdrnt == 2 || fl->rs[i].qdrnt == 1) && fl->rs[i].hitx == 1)
-//            draw_col(fl, &fl->m.so, i);
-//        else if ((fl->rs[i].qdrnt == 3 || fl->rs[i].qdrnt == 2) && fl->rs[i].hity == 1)
-//            draw_col(fl, &fl->m.we, i);
-//        else
-//            draw_col(fl, &fl->m.ea, i);
-//		Drawing walls
-
-//        draw_col(fl, &fl->m.no, i);
         i++;
         pl->r_st += (float)(FOV) / fl->res.x;
     }
