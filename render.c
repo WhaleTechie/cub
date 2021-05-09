@@ -89,20 +89,37 @@ void cast_view(t_player *pl, t_cub *fl)
     {
         x = pl->pos.x;
         y = pl->pos.y;
-        while (fl->m.map_ar[(int)y][(int)x] != '1')
+        while (fl->m.map_ar[(int)y][(int)x] != '1' )
         {
             x += cos(pl->r_st)/120;
             y += sin(pl->r_st)/120;
-//            pixel_put(&fl->ml.img, x * M_SCALE, y * M_SCALE, 0); // для теста
+
+        }
+        int dot = 0;
+        double dx = cos(pl->r_st)/120;
+        double dy = sin(pl->r_st)/120;
+        while (dot < 20 )
+        {
+            if (fl->m.map_ar[(int)(y - dy/2)][(int)(x - dx/2)] == '1')
+            {
+                x -= dx/2;
+                y -= dy/2;
+            }
+           else
+            {
+               dx /= 2;
+               dy /= 2;
+            }
+           dot++;
         }
 
 //		Hits which side
-        fl->rs[i].r_pos.x = x;
-        fl->rs[i].r_pos.y = y;
+            fl->rs[i].r_pos.x = x;
+            fl->rs[i].r_pos.y = y;
 
 //		Distance and ray size
         fl->rs[i].dist = hypotf((fl->rs[i].r_pos.x - pl->pos.x),(fl->rs[i].r_pos.y - pl->pos.y)) * cosf(pl->pov - pl->r_st);
-        fl->rs[i].size = 	(1 / fl->rs[i].dist  * fl->dist_plane);
+        fl->rs[i].size = (1 / fl->rs[i].dist  * fl->dist_plane);
 
         fl->rs[i].qdrnt = f_quadrant(fl->m.plr.r_st);
         if (fabs(fl->rs[i].r_pos.y - round(fl->rs[i].r_pos.y)) < fabs(fl->rs[i].r_pos.x - round(fl->rs[i].r_pos.x)))
@@ -115,7 +132,6 @@ void cast_view(t_player *pl, t_cub *fl)
                 draw_col(fl, fl->m.so, i);
         }
         else
-//            if (fabs(fl->rs[i].r_pos.x - round(fl->rs[i].r_pos.x)) < 0.01)
         {
             fl->rs[i].hity = 1;
             fl->rs[i].hitx = 0;
@@ -133,7 +149,6 @@ int    f_quadrant(double angle)
 {
     int quadrant;
 
-    quadrant = 0;
     if (cos(angle) > 0 && sin(angle) > 0)
         quadrant = 1;
     else if (sin(angle) > 0 && cos(angle) < 0)
@@ -143,3 +158,8 @@ int    f_quadrant(double angle)
     else quadrant = 3;
     return (quadrant);
 }
+//
+//void dda_check(t_cub *fl)
+//{
+//
+//}
