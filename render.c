@@ -14,12 +14,12 @@
 int render(t_cub *fl)
 {
 	clean_s(*fl);
-	draw_map(*fl);
+    cast_view(&fl->m.plr, fl);
+    draw_map(*fl);
 	draw_player(fl->m.plr.pos.x * M_SCALE, fl->m.plr.pos.y * M_SCALE,
                 fl->ml.img, 250000000);
-	cast_view(&fl->m.plr, fl);
-	mlx_put_image_to_window(fl->ml.ml_p, fl->ml.w_p, fl->ml.img.im,
-                            0, 0);
+	mlx_put_image_to_window(fl->ml.ml_p, fl->ml.w_p, fl->ml.img.im,0, 0);
+    draw_spr(&fl->m.plr.pos,&fl->m.spr[0]);
 	return (0);
 }
 
@@ -135,7 +135,7 @@ void cast_view(t_player *pl, t_cub *fl)
         {
             fl->rs[i].hity = 1;
             fl->rs[i].hitx = 0;
-            if ((fl->rs[i].qdrnt == 3 || fl->rs[i].qdrnt == 2) && fl->rs[i].hity == 1)
+            if ((fl->rs[i].qdrnt == 3 || fl->rs[i].qdrnt == 2))
                 draw_col(fl, fl->m.we, i);
             else
             draw_col(fl, fl->m.ea, i);
