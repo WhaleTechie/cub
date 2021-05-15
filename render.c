@@ -11,16 +11,37 @@
 /* ************************************************************************** */
 
 #include "cub3d.h"
-int render(t_cub *fl)
+int    render(t_cub *fl)
 {
-	clean_s(*fl);
+    size_t i;
+
+    if (!(fl->ml.img.im = mlx_new_image(fl->ml.ml_p, (int)fl->res.x, (int)fl->res.y)))
+        printf("Error: image\n");
+    if (!(fl->ml.img.addr = mlx_get_data_addr(fl->ml.img.im, &fl->ml.img.bits_per_pixel, &fl->ml.img.line_length, &fl->ml.img.endian)))
+        printf("Error: address\n");
+	clean_s(fl);
     cast_view(&fl->m.plr, fl);
+    i = 0;
+    while (i < fl->sprs)
+    {
+        get_spr_info(&fl->m.plr.pos, &fl->m.spr[i], fl);
+
+//        if (fabs(fl->m.spr[i].dir) < M_PI_2)
+            draw_spr(&fl->m.spr[i], fl);
+        i++;
+    }
+    sort_spr(fl, fl->m.spr);
+    i = -1;
+    while (i < fl->sprs)
+        draw_spr(&fl->m.spr[i++], fl);
     draw_map(*fl);
 	draw_player(fl->m.plr.pos.x * M_SCALE, fl->m.plr.pos.y * M_SCALE,
                 fl->ml.img, 250000000);
 	mlx_put_image_to_window(fl->ml.ml_p, fl->ml.w_p, fl->ml.img.im,0, 0);
-    draw_spr(&fl->m.plr.pos,&fl->m.spr[0]);
-	return (0);
+    if (fl->ml.img.im)
+        mlx_destroy_image(fl->ml.ml_p, fl->ml.img.im);
+    fl->ml.img.im = NULL;
+    return(0);
 }
 
 void draw_col(t_cub *fl, t_textur tx, int c_n)
@@ -48,7 +69,6 @@ void draw_col(t_cub *fl, t_textur tx, int c_n)
         }
 	    while (i < fl->rs[c_n].size && (i < fl->res.y))
 	    {
-//	        printf("ofset + 1/param %f\n",(offset + i / param));
             color = pixel_get(&tx, t_x, (offset + i / param));
             pixel_put(&fl->ml.img, c_n, (int)(wall_start + i), color);
             i++;
@@ -79,6 +99,10 @@ void cast_view(t_player *pl, t_cub *fl)
     float y;
     int i;
 
+    if (pl->pov > M_PI)
+        pl->pov -= 2 * M_PI;
+    if (pl->pov < -M_PI)
+        pl->pov += 2 * M_PI;
     //		distance to projection plane
     fl->dist_plane = fl->res.x / 2 / tan(FOV / 2);
     pl->r_st = pl->pov - (FOV/2);
@@ -119,7 +143,7 @@ void cast_view(t_player *pl, t_cub *fl)
 
 //		Distance and ray size
         fl->rs[i].dist = hypotf((fl->rs[i].r_pos.x - pl->pos.x),(fl->rs[i].r_pos.y - pl->pos.y)) * cosf(pl->pov - pl->r_st);
-        fl->rs[i].size = (1 / fl->rs[i].dist  * fl->dist_plane);
+        fl->rs[i].size = (1 / fl->rs[i].dist * fl->dist_plane);
 
         fl->rs[i].qdrnt = f_quadrant(fl->m.plr.r_st);
         if (fabs(fl->rs[i].r_pos.y - round(fl->rs[i].r_pos.y)) < fabs(fl->rs[i].r_pos.x - round(fl->rs[i].r_pos.x)))
@@ -158,8 +182,3 @@ int    f_quadrant(double angle)
     else quadrant = 3;
     return (quadrant);
 }
-//
-//void dda_check(t_cub *fl)
-//{
-//
-//}
